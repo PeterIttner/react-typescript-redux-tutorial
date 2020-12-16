@@ -1,27 +1,16 @@
-import { Action, configureStore, Dispatch } from "@reduxjs/toolkit";
+import {
+  Action,
+  configureStore,
+  createSlice,
+  Dispatch,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { FeedbackItemType, IAppState } from "./types";
-
-const addProFeedback = (text: string): IAppAction => {
-  return {
-    type: ACTION_ADD_PRO,
-    payload: text,
-  };
-};
-
-const addConFeedback = (text: string): IAppAction => {
-  return {
-    type: ACTION_ADD_CON,
-    payload: text,
-  };
-};
 
 interface IAppAction extends Action {
   type: string;
   payload: string;
 }
-
-const ACTION_ADD_PRO = "ADD_PRO";
-const ACTION_ADD_CON = "ADD_CON";
 
 const initialState: IAppState = {
   feedbacks: [
@@ -31,42 +20,28 @@ const initialState: IAppState = {
   ],
 };
 
-const reducer = (
-  state: IAppState = initialState,
-  action: IAppAction
-): IAppState => {
-  switch (action.type) {
-    case ACTION_ADD_PRO: {
+const slice = createSlice({
+  name: "feedback",
+  initialState: initialState,
+  reducers: {
+    addProFeedback: (state, action: PayloadAction<string>) => {
       const id = state.feedbacks.length + 1;
-      return {
-        feedbacks: [
-          ...state.feedbacks,
-          {
-            id: id,
-            feedbackType: FeedbackItemType.Pro,
-            text: action.payload,
-          },
-        ],
-      };
-    }
-    case ACTION_ADD_CON: {
+      state.feedbacks.push({
+        id: id,
+        feedbackType: FeedbackItemType.Pro,
+        text: action.payload,
+      });
+    },
+    addConFeedback: (state, action: PayloadAction<string>) => {
       const id = state.feedbacks.length + 1;
-      return {
-        feedbacks: [
-          ...state.feedbacks,
-          {
-            id: id,
-            feedbackType: FeedbackItemType.Con,
-            text: action.payload,
-          },
-        ],
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
+      state.feedbacks.push({
+        id: id,
+        feedbackType: FeedbackItemType.Con,
+        text: action.payload,
+      });
+    },
+  },
+});
 
 interface MyMiddlewareAPI {
   getState: () => IAppState;
@@ -82,8 +57,9 @@ const shortenMiddleware = (store: MyMiddlewareAPI) => (
 };
 
 const reduxStore = configureStore({
-  reducer: reducer,
+  reducer: slice.reducer,
   middleware: [shortenMiddleware],
 });
 
-export { addProFeedback, addConFeedback, reduxStore };
+export { reduxStore };
+export const { addProFeedback, addConFeedback } = slice.actions;
