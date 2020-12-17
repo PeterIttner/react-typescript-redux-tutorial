@@ -1,5 +1,19 @@
 # Feedback Demo Application
 
+## Getting started
+
+```bash
+yarn
+yarn start
+
+# or
+
+npm install
+npm start
+
+# browse http://localhost:3000
+```
+
 ## What to expect
 
 Expect not too much. The app has been hacked (incl. some explanations) within 45 Minutes and thats it.
